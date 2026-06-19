@@ -54,10 +54,10 @@ def login(data: UserLogin, response: Response, db: Session = Depends(get_db)):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=settings.is_production,
-        samesite="lax",
+        secure=True,          # Bắt buộc phải True khi dùng samesite="none"
+        samesite="none",      # <--- ĐỔI TỪ "lax" THÀNH "none" để chạy cross-site
         max_age=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    )
+)
     return user
 
 
