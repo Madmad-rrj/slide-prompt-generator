@@ -67,7 +67,7 @@ export function LoginPage() {
 
   // Hard redirect thay vì navigate() — OAuth cần browser rời khỏi SPA để đến Google.
   const handleGoogleLogin = () => {
-  window.location.href = '/api/auth/google'
+    window.location.href = authAPI.googleLoginUrl()
   }
 
   // Tab vừa xác thực email xong (mở từ link trong email) → hiện màn xác nhận
