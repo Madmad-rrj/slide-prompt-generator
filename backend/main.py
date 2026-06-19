@@ -54,9 +54,14 @@ app = FastAPI(
 )
 
 # CORS — chỉ allow origin trong config
+# CORS — chỉ allow origin trong config + domain Vercel mới
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_settings.get_allowed_origins(),
+    # Sửa dòng này: Kết hợp origin từ config VÀ domain vercel của bạn
+    allow_origins=_settings.get_allowed_origins() + [
+        "https://slide-prompt-generator-iota.vercel.app",
+        "http://localhost:3000" # Thêm cái này để tiện test dưới máy local nếu cần
+    ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
