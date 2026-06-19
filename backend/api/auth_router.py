@@ -175,8 +175,8 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=settings.is_production,
-        samesite="lax",
+        secure=True,          # Ép cứng True để trình duyệt chấp nhận SameSite=None
+        samesite="none",      # Đổi từ "lax" thành "none" để hỗ trợ gọi API chéo domain (Vercel <-> Render)
         max_age=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
     return response
