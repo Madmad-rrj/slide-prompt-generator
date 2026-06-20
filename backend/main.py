@@ -77,6 +77,29 @@ app.include_router(history_router, prefix="/api")
 app.include_router(draft_router, prefix="/api")
 
 
+# ── ENDPOINT DEBUG SMTP CONNECTIVITY ───────────────────────────────────
+@app.get("/debug/smtp", tags=["Health Check"])
+def test_smtp():
+    """Kiểm tra xem hạ tầng mạng của Server có kết nối được tới cổng SMTP Gmail không."""
+    import socket
+    try:
+        # Thử test cổng TLS thông dụng (587)
+        socket.create_connection(("smtp.gmail.com", 587), timeout=5)
+        return {"smtp_587": "OK"}
+    except Exception as e:
+        try:
+            # Thử test fallback sang cổng SSL (465)
+            socket.create_connection(("smtp.gmail.com", 465), timeout=5)
+            return {"smtp_465": "OK", "note": "Cổng 587 bị chặn nhưng cổng 465 thì mở"}
+        except Exception as e2:
+            return {
+                "smtp": "FAIL", 
+                "error_587": str(e),
+                "error_465": str(e2),
+                "advice": "Render đã chặn toàn bộ lưu lượng SMTP ra ngoài. Hãy chuyển sang dùng HTTP API của Resend hoặc Brevo."
+            }
+
+
 @app.get("/", tags=["Health Check"])
 def root():
     base = _settings.BASE_URL.rstrip("/")
@@ -92,5 +115,6 @@ def root():
             "history": "GET  /api/history",
             "drafts": "POST /api/drafts",
             "bin": "GET  /api/bin",
+            "debug_smtp": "GET /debug/smtp"  # Đã map ra ngoài root
         },
     }
